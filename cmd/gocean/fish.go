@@ -3,196 +3,9 @@ package main
 import (
 	"math/rand"
 	"time"
+
+	"gocean/internal/art"
 )
-
-// 1: Body
-// 2: Dorsal Fin
-// 3: Flippers
-// 4: Eye
-// 5: Mouth
-// 6: Tailfin
-// 7: Gills
-var fishies = []RawStaticArt{
-	{
-		frame: `       \
-     ...\..,
-\  /'       \
- >=     (  ' >
-/  \      / /
-    b"'"'/''`,
-		mask: `       2
-     1112111
-6  11???????1
- 66?????7??4?5
-6  1??????3?1
-    11111311`,
-	},
-
-	{
-		frame: `      /
-  ,../...
- /       '\  /
-< '  )     =<
- \ \      /  \
-  b'\'"'"'`,
-		mask: `      2
-  1112111
- 1???????11  6
-5?4??7?????66
- 1?3??????1  6
-  11311111`,
-	},
-
-	{
-		frame: `    \
-\ /--\
->=  (o>
-/ \__/
-    /`,
-		mask: `    2
-6 1111
-66??745
-6 1111
-    3`,
-	},
-
-	{
-		frame: `  /
- /--\ /
-<o)  =<
- \__/ \
-  \`,
-		mask: `  2
- 1111 6
-547??66
- 1111 6
-  3`,
-	},
-
-	{
-		frame: `       \:.
-\;,   ,;\\\,,
-  \\\;;:::::::o
-  ///;;::::::::<
- /;b bb/////bb`,
-		mask: `       222
-666   1122211
-  6661111111114
-  66611111111115
- 666 113333311`,
-	},
-
-	{
-		frame: `      .:/
-   ,,///;,   ,;/
- o:::::::;;///
->::::::::;;\\\
-  ''\\\\\'' ';\`,
-		mask: `      222
-   1122211   666
- 4111111111666
-51111111111666
-  113333311 666`,
-	},
-
-	{
-		frame: `  __
-><_'>
-   '`,
-		mask: `  11
-61145
-   3`,
-	},
-
-	{
-		frame: ` __
-<'_><
- b`,
-		mask: ` 11
-54116
- 3`,
-	},
-
-	{
-		frame: `   ..\,
->='   ('>
-  '''/''`,
-		mask: `   1121
-661???745
-  111311`,
-	},
-
-	{
-		frame: `  ,/..
-<')   b=<
- bb\bbb`,
-		mask: `  1211
-547???166
- 113111`,
-	},
-
-	{
-		frame: `   \
-  / \
->=_('>
-  \_/
-   /`,
-		mask: `   2
-  1?1
-661745
-  111
-   3`,
-	},
-
-	{
-		frame: `  /
- / \
-<')_=<
- \_/
-  \`,
-		mask: `  2
- 1?1
-547166
- 111
-  3`,
-	},
-
-	{
-		frame: `  ,\
->=('>
-  '/`,
-		mask: `  12
-66745
-  13`,
-	},
-
-	{
-		frame: ` /,
-<')=<
- \b`,
-		mask: ` 21
-54766
- 31`,
-	},
-
-	{
-		frame: `  __
-\/ o\
-/\__/`,
-		mask: `  11
-61?41
-61111`,
-	},
-
-	{
-		frame: ` __
-/o \/
-\__/\`,
-		mask: ` 11
-14?16
-11116`,
-	},
-}
 
 // addAllFish spawns fish based on screen size
 func (m *model) addAllFish() {
@@ -204,9 +17,9 @@ func (m *model) addAllFish() {
 
 // addFish creates and adds a single fish entity to the aquarium
 func (m *model) addFish() {
-	fishNum := rand.Intn(len(fishies))
-	fishRaw := fishies[fishNum]
-	fish := newSprite([]string{fishRaw.frame}, []string{fishRaw.mask})
+	fishNum := rand.Intn(len(art.Fishies))
+	fishRaw := art.Fishies[fishNum]
+	fish := newSprite([]string{fishRaw.Frame}, []string{fishRaw.Mask})
 
 	depth := int(rand.Intn(zFishEnd-zFishStart)) + zFishStart
 	velocity := RandomFishVelocity()
@@ -228,15 +41,15 @@ func (m *model) addFish() {
 		// Update horizontal movement
 		horizontalMovement.UpdateHorizontal(ee, dt)
 
-		x := ee.x
+		bubbleX := ee.x
 		if horizontalMovement.direction > 0 {
-			x += ee.s.w
+			bubbleX += ee.s.w
 		}
-		y := ee.y + ee.s.h/2
+		bubbleY := ee.y + ee.s.h/2
 
 		// Spawn bubbles using Poisson distribution
 		if ShouldSpawnBubble(dt, bubbleSpawnRate) {
-			mm.addBubble(x, y, ee.z-1)
+			mm.addBubble(bubbleX, bubbleY, ee.z-1)
 		}
 
 		// Kill fish if it swims off screen

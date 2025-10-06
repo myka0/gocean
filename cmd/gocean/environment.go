@@ -4,19 +4,14 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+
+	"gocean/internal/art"
 )
 
 // addEnvironment creates the water surface waves that appear at the top of the screen
 func (m *model) addEnvironment() {
-	segments := []string{
-		"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-		"^^^^ ^^^  ^^^   ^^^    ^^^^      ",
-		"^^^^      ^^^^     ^^^    ^^     ",
-		"^^      ^^^^      ^^^    ^^^^^^  ",
-	}
-
 	// Build the complete wave pattern by repeating segments
-	for i, s := range segments {
+	for i, s := range art.WaterSegments {
 		rep := (m.windowWidth / len(s)) + 1
 		var image, mask string
 		for range rep {
@@ -41,44 +36,14 @@ func (m *model) addEnvironment() {
 
 // addCastle creates the decorative castle that appears on the right side of the screen.
 func (m *model) addCastle() {
-	castle := RawStaticArt{
-		frame: `               T~~
-               |
-              /^\
-             /   \
- _   _   _  /     \  _   _   _
-[ ]_[ ]_[ ]/ _   _ \[ ]_[ ]_[ ]
-|_=__-_ =_|_[ ]_[ ]_|_=-___-__|
- | _- =  | =_ = _    |= _=   |
- |= -[]  |- = _ =    |_-=_[] |
- | =_    |= - ___    | =_ =  |
- |=  []- |-  /| |\   |=_ =[] |
- |- =_   | =| | | |  |- = -  |
- |_______|__|_|_|_|__|_______|`,
-		mask: `                rr
-
-              yyy
-             y   y
-            y     y
-           y       y
-
-
-
-              yyy
-             yy yy
-            y y y y
-            yyyyyyy`,
-	}
-
 	// Create castle sprite and position it on the right side of the screen
-	sprite := newSprite([]string{castle.frame}, []string{castle.mask})
+	sprite := newSprite([]string{art.Castle.Frame}, []string{art.Castle.Mask})
 	e := &Entity{
-		s:        sprite,
-		x:        m.windowWidth - 32,
-		y:        m.windowHeight - 13,
-		z:        zCastle,
-		alive:    true,
-		physical: false,
+		s:     sprite,
+		x:     m.windowWidth - 32,
+		y:     m.windowHeight - 13,
+		z:     zCastle,
+		alive: true,
 	}
 
 	m.entities[e.z] = append(m.entities[e.z], e)

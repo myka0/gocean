@@ -15,12 +15,6 @@ type Frame struct {
 	image [][]string
 }
 
-// RawStaticArt represents unprocessed sprite data before conversion to a Sprite
-type RawStaticArt struct {
-	frame string
-	mask  string
-}
-
 // getWidth calculates the maximum width of any line in a multi-line string
 func getWidth(s string) int {
 	lines := strings.Split(s, "\n")

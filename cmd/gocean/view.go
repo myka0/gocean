@@ -41,16 +41,17 @@ func (m *model) View() string {
 
 // createPalette generates a color palette for entity rendering
 func createPalette() map[byte]lipgloss.Style {
+	base := lipgloss.NewStyle().Bold(true)
 	styles := map[byte]lipgloss.Style{}
 
 	// Create randomized colors for digits 1-7, with 4 fixed as white for eye highlights
 	for d := '1'; d <= '7'; d++ {
 		key := byte(d)
 		if d == '4' {
-			styles[key] = lipgloss.NewStyle().Foreground(lipgloss.Color("7"))
+			styles[key] = base.Foreground(lipgloss.Color("7"))
 			continue
 		}
-		styles[key] = lipgloss.NewStyle().Foreground(lipgloss.Color(fmt.Sprint(rand.Intn(6) + 1)))
+		styles[key] = base.Foreground(lipgloss.Color(fmt.Sprint(rand.Intn(6) + 1)))
 	}
 
 	return styles
@@ -58,6 +59,7 @@ func createPalette() map[byte]lipgloss.Style {
 
 // colorize applies color styling to a character based on its color mask
 func colorize(c byte, m byte, palette map[byte]lipgloss.Style) string {
+	base := lipgloss.NewStyle().Bold(true)
 	// Return uncolored space characters as is
 	if c == ' ' && m == ' ' {
 		return string(c)
@@ -71,7 +73,7 @@ func colorize(c byte, m byte, palette map[byte]lipgloss.Style) string {
 	// Use ANSI color mapping for other color codes
 	colID, ok := ansi16[m]
 	if !ok {
-		return lipgloss.NewStyle().Foreground(lipgloss.Color("8")).Render(string(c))
+		return base.Foreground(lipgloss.Color("7")).Render(string(c))
 	}
-	return lipgloss.NewStyle().Foreground(lipgloss.Color(colID)).Render(string(c))
+	return base.Foreground(lipgloss.Color(colID)).Render(string(c))
 }

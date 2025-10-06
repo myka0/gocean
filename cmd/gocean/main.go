@@ -26,9 +26,6 @@ type model struct {
 	// Performance optimization buffers
 	renderBuf []byte
 	aliveTemp map[int][]*Entity
-
-	// Frame timing control
-	lastFrame time.Time
 }
 
 // initialModel creates and initializes a new aquarium model
@@ -39,7 +36,6 @@ func initialModel(width, height int) *model {
 		lastTick:     time.Now(),
 		paused:       false,
 		entities:     make(map[int][]*Entity),
-		lastFrame:    time.Now(),
 	}
 
 	// Initialize the rendering grid
