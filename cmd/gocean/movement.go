@@ -56,12 +56,12 @@ func (mb *MovementBehavior) UpdateVertical(e *Entity, dt time.Duration) {
 
 // IsOffScreenHorizontal checks if entity has moved off screen horizontally
 func IsOffScreenHorizontal(e *Entity, screenWidth int) bool {
-	return e.x < 1-e.s.w || e.x > screenWidth
+	return e.x < -e.s.w || e.x > screenWidth
 }
 
 // IsOffScreenVertical checks if entity has moved off screen vertically
 func IsOffScreenVertical(e *Entity, screenHeight int) bool {
-	return e.y < 0 || e.y > screenHeight
+	return e.y < -e.s.h || e.y > screenHeight
 }
 
 // ShouldSpawnBubble determines if a bubble should spawn using Poisson distribution
@@ -85,4 +85,34 @@ func RandomSeaweedHeight() int {
 func CalculateFishCount(screenWidth, screenHeight int) int {
 	screenSize := (screenHeight - waterSurfaceOffset) * screenWidth
 	return screenSize / fishDensityFactor
+}
+
+// CollisionDetector provides collision detection functionality
+type CollisionDetector struct {
+	pointX, pointY int
+}
+
+// NewCollisionDetector creates a collision detector for a specific point
+func NewCollisionDetector(x, y int) *CollisionDetector {
+	return &CollisionDetector{pointX: x, pointY: y}
+}
+
+// CheckCollisionWithFish checks if the detector point collides with any fish
+func (cd *CollisionDetector) CheckCollisionWithFish(m *model) *Entity {
+	for i := zFishStart; i < zFishEnd; i++ {
+		fishies := m.entities[i]
+		for _, fish := range fishies {
+			if !fish.physical {
+				continue
+			}
+
+			// Check if collision point is within fish bounds
+			if cd.pointX >= fish.x && cd.pointX <= fish.x+fish.s.w &&
+				cd.pointY >= fish.y && cd.pointY <= fish.y+fish.s.h {
+				return fish
+			}
+		}
+	}
+
+	return nil
 }

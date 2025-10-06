@@ -14,14 +14,14 @@ const (
 	zCastle    = 22
 
 	// Waterline layers
-	zWaterLine0 = 9
-	zWaterGap0  = 8
-	zWaterLine1 = 7
-	zWaterGap1  = 6
-	zWaterLine2 = 5
-	zWaterGap2  = 4
-	zWaterLine3 = 3
-	zWaterGap3  = 2
+	zWaterGap0  = 9
+	zWaterLine0 = 8
+	zWaterGap1  = 7
+	zWaterLine1 = 6
+	zWaterGap2  = 5
+	zWaterLine2 = 4
+	zWaterGap3  = 3
+	zWaterLine3 = 2
 
 	// Aquarium dimensions
 	minAquariumWidth  = 32
@@ -39,16 +39,39 @@ const (
 	bubbleSpawnRate   = 0.2 // bubbles per second per fish
 	bubbleRiseSpeed   = 10  // chars/sec
 	shipVelocity      = 10  // chars/sec
+	swanVelocity      = 10  // chars/sec
+	whaleVelocity     = 10  // chars/sec
+	ducksVelocity     = 10  // chars/sec
+	dolphinVelocity   = 15  // chars/sec
+	fishHookVelocity  = 10  // chars/sec
+	monsterVelocity   = 20  // chars/sec
+	bigFishVelocity   = 30  // chars/sec
+	sharkVelocity     = 30  // chars/sec
 
 	// Seaweed constants
 	minSeaweedHeight = 3
 	maxSeaweedHeight = 7
 
 	// Animation timing
-	bubbleFrameDelay = 1 * time.Second
+	bubbleFrameDelay     = 1 * time.Second
+	monsterFrameDelay    = 150 * time.Millisecond
+	waterSpoutFrameDelay = 100 * time.Millisecond
+	waterSpoutResetDelay = 1000 * time.Millisecond
+	splatFrameDelay      = 500 * time.Millisecond
+	duckFrameDelay       = 500 * time.Millisecond
+
+	// Special entity Y positions
+	yShipPosition    = 0
+	yWhalePosition   = 3
+	yMonsterPosition = 2
+	ySwanPosition    = 1
+	yDuckPosition    = 5
+	yDolphinTop      = 1
+	yDolphinMid      = 4
+	yDolphinBottom   = 8
 )
 
-// Random Pallete
+// ANSI color mapping
 var (
 	ansi16 = map[byte]string{
 		'r': "1", 'R': "9",
