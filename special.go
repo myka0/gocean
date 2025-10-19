@@ -1,60 +1,60 @@
-package main
+package gocean
 
 import (
 	"math/rand"
 	"strings"
 	"time"
 
-	"gocean/internal/art"
+	"github.com/myka0/gocean/internal/art"
 )
 
 // Special entity types
-type SpecialEntityType int
+type specialEntityType int
 
 const (
-	Ship SpecialEntityType = iota
-	Whale
-	Monster
-	BigFish
-	Shark
-	FishHook
-	Swan
-	Ducks
-	Dolphins
-	SpecialEntityCount
+	ship specialEntityType = iota
+	whale
+	monster
+	bigFish
+	shark
+	fishHook
+	swan
+	ducks
+	dolphins
+	specialEntityCount
 )
 
 // addSpecial creates special entities using improved selection and configuration
 func (m *model) addSpecial() {
-	specialType := SpecialEntityType(rand.Intn(int(SpecialEntityCount)))
+	specialType := specialEntityType(rand.Intn(int(specialEntityCount)))
 
 	switch specialType {
-	case Ship:
+	case ship:
 		m.addShip()
-	case Whale:
+	case whale:
 		m.addWhale()
-	case Monster:
+	case monster:
 		m.addMonster()
-	case BigFish:
+	case bigFish:
 		m.addBigFish()
-	case Shark:
+	case shark:
 		m.addShark()
-	case FishHook:
+	case fishHook:
 		m.addFishHook()
-	case Swan:
+	case swan:
 		m.addSwan()
-	case Ducks:
+	case ducks:
 		m.addDucks()
-	case Dolphins:
+	case dolphins:
 		m.addDolphins()
 	}
 }
 
 // createHorizontalEntity creates a basic horizontal-moving entity with common setup
-func (m *model) createHorizontalEntity(dir int, y int, z int, velocity int, sprite Sprite) *Entity {
+func (m *model) createHorizontalEntity(dir int, y int, z int, velocity int, sprite sprite) *entity {
 	startX, direction := m.createMovement(dir, sprite.w)
 
-	e := &Entity{
+	e := &entity{
 		s:     sprite,
 		x:     startX,
 		y:     y,
@@ -62,12 +62,12 @@ func (m *model) createHorizontalEntity(dir int, y int, z int, velocity int, spri
 		alive: true,
 	}
 
-	horizontalMovement := NewHorizontalMovement(velocity, direction)
+	horizontalMovement := newHorizontalMovement(velocity, direction)
 
-	e.onTick = func(mm *model, ee *Entity, dt time.Duration) {
-		horizontalMovement.UpdateHorizontal(ee, dt)
+	e.onTick = func(mm *model, ee *entity, dt time.Duration) {
+		horizontalMovement.updateHorizontal(ee, dt)
 
-		if IsOffScreenHorizontal(ee, mm.windowWidth) {
+		if isOffScreenHorizontal(ee, mm.windowWidth) {
 			ee.alive = false
 		}
 	}
@@ -77,10 +77,10 @@ func (m *model) createHorizontalEntity(dir int, y int, z int, velocity int, spri
 }
 
 // createAnimatedHorizontalEntity creates an animated horizontal-moving entity
-func (m *model) createAnimatedHorizontalEntity(dir int, y int, z int, velocity int, frameDelay time.Duration, sprite Sprite) *Entity {
+func (m *model) createAnimatedHorizontalEntity(dir int, y int, z int, velocity int, frameDelay time.Duration, sprite sprite) *entity {
 	startX, direction := m.createMovement(dir, sprite.w)
 
-	e := &Entity{
+	e := &entity{
 		s:          sprite,
 		x:          startX,
 		y:          y,
@@ -89,13 +89,13 @@ func (m *model) createAnimatedHorizontalEntity(dir int, y int, z int, velocity i
 		alive:      true,
 	}
 
-	horizontalMovement := NewHorizontalMovement(velocity, direction)
+	horizontalMovement := newHorizontalMovement(velocity, direction)
 
-	e.onTick = func(mm *model, ee *Entity, dt time.Duration) {
+	e.onTick = func(mm *model, ee *entity, dt time.Duration) {
 		ee.AdvanceFrame()
-		horizontalMovement.UpdateHorizontal(ee, dt)
+		horizontalMovement.updateHorizontal(ee, dt)
 
-		if IsOffScreenHorizontal(ee, mm.windowWidth) {
+		if isOffScreenHorizontal(ee, mm.windowWidth) {
 			ee.alive = false
 		}
 	}
@@ -160,7 +160,7 @@ func (m *model) addWhale() {
 	// Determine starting position and movement direction
 	startX, direction := m.createMovement(num, sprite.w)
 
-	e := &Entity{
+	e := &entity{
 		s:     sprite,
 		x:     startX,
 		y:     yWhalePosition,
@@ -168,13 +168,13 @@ func (m *model) addWhale() {
 		alive: true,
 	}
 
-	horizontalMovement := NewHorizontalMovement(whaleVelocity, direction)
+	horizontalMovement := newHorizontalMovement(whaleVelocity, direction)
 
-	e.onTick = func(mm *model, ee *Entity, dt time.Duration) {
-		horizontalMovement.UpdateHorizontal(ee, dt)
+	e.onTick = func(mm *model, ee *entity, dt time.Duration) {
+		horizontalMovement.updateHorizontal(ee, dt)
 
 		// Kill whale when it moves completely off screen
-		if IsOffScreenHorizontal(ee, mm.windowWidth) {
+		if isOffScreenHorizontal(ee, mm.windowWidth) {
 			ee.alive = false
 		}
 	}
@@ -196,7 +196,7 @@ func (m *model) addWhale() {
 }
 
 // addWaterSpout creates a water spout animation with improved frame management
-func (m *model) addWaterSpout(x int, y int, dir int) *Entity {
+func (m *model) addWaterSpout(x int, y int, dir int) *entity {
 	// Create water spout sprite
 	mask := make([]string, len(art.WaterSpoutFrames))
 	for i := range mask {
@@ -204,7 +204,7 @@ func (m *model) addWaterSpout(x int, y int, dir int) *Entity {
 	}
 	sprite := newSprite(art.WaterSpoutFrames, mask)
 
-	e := &Entity{
+	e := &entity{
 		s:          sprite,
 		x:          x,
 		y:          y,
@@ -214,9 +214,9 @@ func (m *model) addWaterSpout(x int, y int, dir int) *Entity {
 	}
 
 	// Create horizontal movement behavior
-	horizontalMovement := NewHorizontalMovement(whaleVelocity, dir)
+	horizontalMovement := newHorizontalMovement(whaleVelocity, dir)
 
-	e.onTick = func(mm *model, ee *Entity, dt time.Duration) {
+	e.onTick = func(mm *model, ee *entity, dt time.Duration) {
 		// Create delay when spout resets
 		if ee.frame == 0 {
 			ee.frameDelay = waterSpoutResetDelay
@@ -226,7 +226,7 @@ func (m *model) addWaterSpout(x int, y int, dir int) *Entity {
 			ee.frameDelay = waterSpoutFrameDelay
 		}
 
-		horizontalMovement.UpdateHorizontal(ee, dt)
+		horizontalMovement.updateHorizontal(ee, dt)
 	}
 
 	return e
@@ -241,7 +241,7 @@ func (m *model) addShark() {
 	// Determine starting position and movement direction
 	startX, direction := m.createMovement(num, sprite.w)
 
-	e := &Entity{
+	e := &entity{
 		s:     sprite,
 		x:     startX,
 		y:     rand.Intn(m.windowHeight-waterSurfaceOffset-sprite.h) + waterSurfaceOffset,
@@ -250,10 +250,10 @@ func (m *model) addShark() {
 	}
 
 	// Create horizontal movement behavior
-	horizontalMovement := NewHorizontalMovement(sharkVelocity, direction)
+	horizontalMovement := newHorizontalMovement(sharkVelocity, direction)
 
-	e.onTick = func(mm *model, ee *Entity, dt time.Duration) {
-		horizontalMovement.UpdateHorizontal(ee, dt)
+	e.onTick = func(mm *model, ee *entity, dt time.Duration) {
+		horizontalMovement.updateHorizontal(ee, dt)
 
 		// Calculate teeth position with improved logic
 		teethX := ee.x + 50
@@ -263,14 +263,14 @@ func (m *model) addShark() {
 		teethY := ee.y + 8
 
 		// Use collision detector for better performance
-		collisionDetector := NewCollisionDetector(teethX, teethY)
-		if fish := collisionDetector.CheckCollisionWithFish(mm); fish != nil {
+		collisionDetector := newCollisionDetector(teethX, teethY)
+		if fish := collisionDetector.checkCollisionWithFish(mm); fish != nil {
 			fish.alive = false
 			mm.addSplat(teethX, teethY)
 			mm.addFish()
 		}
 
-		if IsOffScreenHorizontal(ee, mm.windowWidth) {
+		if isOffScreenHorizontal(ee, mm.windowWidth) {
 			ee.alive = false
 		}
 	}
@@ -283,7 +283,7 @@ func (m *model) addShark() {
 func (m *model) addSplat(x, y int) {
 	splat := newSprite(art.SplatFrames, art.SplatMasks)
 
-	e := &Entity{
+	e := &entity{
 		s:          splat,
 		x:          x - 3,
 		y:          y - 3,
@@ -292,7 +292,7 @@ func (m *model) addSplat(x, y int) {
 		alive:      true,
 	}
 
-	e.onTick = func(mm *model, ee *Entity, dt time.Duration) {
+	e.onTick = func(mm *model, ee *entity, dt time.Duration) {
 		ee.AdvanceFrame()
 		if ee.frame == 0 {
 			ee.alive = false
@@ -309,7 +309,7 @@ func (m *model) addFishHook() {
 
 	sprite := newSprite([]string{art.FishHook.Frame}, []string{art.FishHook.Mask})
 
-	hook := &Entity{
+	hook := &entity{
 		s:     sprite,
 		x:     x,
 		y:     -sprite.h,
@@ -318,23 +318,23 @@ func (m *model) addFishHook() {
 	}
 
 	// Create vertical movement behavior
-	up := NewVerticalMovement(fishHookVelocity, -1)
-	down := NewVerticalMovement(fishHookVelocity, 1)
-	fishMovement := NewVerticalMovement(fishHookVelocity, -1)
+	up := newVerticalMovement(fishHookVelocity, -1)
+	down := newVerticalMovement(fishHookVelocity, 1)
+	fishMovement := newVerticalMovement(fishHookVelocity, -1)
 	verticalMovement := down
 
 	// Create fishing line and movement behavior
 	line := m.addFishingLine(x, sprite.h, maxHeight)
-	lineUp := NewVerticalMovement(fishHookVelocity, -1)
-	lineDown := NewVerticalMovement(fishHookVelocity, 1)
+	lineUp := newVerticalMovement(fishHookVelocity, -1)
+	lineDown := newVerticalMovement(fishHookVelocity, 1)
 	lineMovement := lineDown
 
 	hookedFish := false
 
-	hook.onTick = func(mm *model, ee *Entity, dt time.Duration) {
+	hook.onTick = func(mm *model, ee *entity, dt time.Duration) {
 		if hookedFish || ee.y+ee.s.h < maxHeight {
-			verticalMovement.UpdateVertical(ee, dt)
-			lineMovement.UpdateVertical(line, dt)
+			verticalMovement.updateVertical(ee, dt)
+			lineMovement.updateVertical(line, dt)
 		}
 
 		pointX := ee.x + 1
@@ -342,14 +342,14 @@ func (m *model) addFishHook() {
 
 		// Use collision detector for fish hook
 		if !hookedFish {
-			collisionDetector := NewCollisionDetector(pointX, pointY)
-			if fish := collisionDetector.CheckCollisionWithFish(mm); fish != nil {
+			collisionDetector := newCollisionDetector(pointX, pointY)
+			if fish := collisionDetector.checkCollisionWithFish(mm); fish != nil {
 				hookedFish = true
 				verticalMovement = up
 				lineMovement = lineUp
-				fish.onTick = func(mm *model, ee *Entity, dt time.Duration) {
-					fishMovement.UpdateVertical(fish, dt)
-					if IsOffScreenVertical(ee, mm.windowHeight) {
+				fish.onTick = func(mm *model, ee *entity, dt time.Duration) {
+					fishMovement.updateVertical(fish, dt)
+					if isOffScreenVertical(ee, mm.windowHeight) {
 						ee.alive = false
 					}
 				}
@@ -357,7 +357,7 @@ func (m *model) addFishHook() {
 		}
 
 		// Kill fish hook when it moves completely off screen
-		if IsOffScreenVertical(ee, mm.windowHeight) {
+		if isOffScreenVertical(ee, mm.windowHeight) {
 			ee.alive = false
 			line.alive = false
 		}
@@ -369,7 +369,7 @@ func (m *model) addFishHook() {
 }
 
 // addFishingLine creates a fishing line with improved validation
-func (m *model) addFishingLine(x int, y int, maxHeight int) *Entity {
+func (m *model) addFishingLine(x int, y int, maxHeight int) *entity {
 	lineHeight := maxHeight - y
 
 	// Create fishing line sprite
@@ -377,7 +377,7 @@ func (m *model) addFishingLine(x int, y int, maxHeight int) *Entity {
 	lineMask := strings.Repeat("w\n", lineHeight)
 	lineSprite := newSprite([]string{lineFrame}, []string{lineMask})
 
-	line := &Entity{
+	line := &entity{
 		s:     lineSprite,
 		x:     x + 4,
 		y:     -lineHeight - y,
@@ -403,7 +403,7 @@ func (m *model) addDolphins() {
 }
 
 // createDolphin creates a single dolphin with improved boundary checking
-func (m *model) createDolphin(dir int, num int) *Entity {
+func (m *model) createDolphin(dir int, num int) *entity {
 	var y int
 	switch num {
 	case 1:
@@ -421,7 +421,7 @@ func (m *model) createDolphin(dir int, num int) *Entity {
 	// Determine starting position and movement direction
 	startX, direction := m.createMovement(dir, sprite.w)
 
-	e := &Entity{
+	e := &entity{
 		s:     sprite,
 		x:     startX - (15 * num * direction),
 		y:     y,
@@ -430,13 +430,13 @@ func (m *model) createDolphin(dir int, num int) *Entity {
 	}
 
 	// Create horizontal movement behavior
-	horizontalMovement := NewHorizontalMovement(dolphinVelocity, direction)
-	up := NewVerticalMovement(dolphinVelocity, -1)
-	down := NewVerticalMovement(dolphinVelocity, 1)
+	horizontalMovement := newHorizontalMovement(dolphinVelocity, direction)
+	up := newVerticalMovement(dolphinVelocity, -1)
+	down := newVerticalMovement(dolphinVelocity, 1)
 	verticalMovement := up
 
-	e.onTick = func(mm *model, ee *Entity, dt time.Duration) {
-		horizontalMovement.UpdateHorizontal(ee, dt)
+	e.onTick = func(mm *model, ee *entity, dt time.Duration) {
+		horizontalMovement.updateHorizontal(ee, dt)
 
 		// Animate dolphin vertical movement
 		switch ee.y {
@@ -447,11 +447,11 @@ func (m *model) createDolphin(dir int, num int) *Entity {
 			verticalMovement = up
 			ee.frame = 0
 		}
-		verticalMovement.UpdateVertical(ee, dt/3)
+		verticalMovement.updateVertical(ee, dt/3)
 
 		// Kill dolphin when it moves completely off screen
 		if direction == 1 && ee.x > 0 || direction == -1 && ee.x < mm.windowWidth {
-			if IsOffScreenHorizontal(ee, mm.windowWidth) {
+			if isOffScreenHorizontal(ee, mm.windowWidth) {
 				ee.alive = false
 			}
 		}

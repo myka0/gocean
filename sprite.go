@@ -1,17 +1,17 @@
-package main
+package gocean
 
 import (
 	"strings"
 )
 
-// Sprite represents a visual element that can have multiple animation frames
-type Sprite struct {
-	frames []Frame
+// sprite represents a visual element that can have multiple animation frames
+type sprite struct {
+	frames []frame
 	w, h   int
 }
 
-// Frame represents a single animation frame of a sprite
-type Frame struct {
+// frame represents a single animation frame of a sprite
+type frame struct {
 	image [][]string
 }
 
@@ -37,8 +37,8 @@ func getHeight(s string) int {
 }
 
 // newSprite creates a Sprite from raw ASCII art and color mask data
-func newSprite(rawFrames []string, rawMasks []string) Sprite {
-	var frames []Frame
+func newSprite(rawFrames []string, rawMasks []string) sprite {
+	var frames []frame
 
 	// Calculate sprite dimensions from the first frame
 	w := getWidth(rawFrames[0])
@@ -50,7 +50,7 @@ func newSprite(rawFrames []string, rawMasks []string) Sprite {
 	// Process each animation frame
 	for f := range rawFrames {
 		// Initialize frame with proper dimensions
-		frames = append(frames, Frame{
+		frames = append(frames, frame{
 			image: make([][]string, h),
 		})
 
@@ -79,7 +79,7 @@ func newSprite(rawFrames []string, rawMasks []string) Sprite {
 		}
 	}
 
-	return Sprite{
+	return sprite{
 		frames: frames,
 		w:      w,
 		h:      h,

@@ -1,15 +1,15 @@
-package main
+package gocean
 
 import (
 	"math/rand"
 	"time"
 
-	"gocean/internal/art"
+	"github.com/myka0/gocean/internal/art"
 )
 
 // addAllFish spawns fish based on screen size
 func (m *model) addAllFish() {
-	fishCount := CalculateFishCount(m.windowWidth, m.windowHeight)
+	fishCount := calculateFishCount(m.windowWidth, m.windowHeight)
 	for range fishCount {
 		m.addFish()
 	}
@@ -22,10 +22,10 @@ func (m *model) addFish() {
 	fish := newSprite([]string{fishRaw.Frame}, []string{fishRaw.Mask})
 
 	depth := int(rand.Intn(zFishEnd-zFishStart)) + zFishStart
-	velocity := RandomFishVelocity()
+	velocity := randomFishVelocity()
 	startX, direction := m.createMovement(fishNum, fish.w)
 
-	e := &Entity{
+	e := &entity{
 		s:        fish,
 		x:        startX,
 		y:        rand.Intn(m.windowHeight-waterSurfaceOffset-fish.h) + waterSurfaceOffset,
@@ -35,11 +35,11 @@ func (m *model) addFish() {
 	}
 
 	// Store movement behavior in entity for tick updates
-	horizontalMovement := NewHorizontalMovement(velocity, direction)
+	horizontalMovement := newHorizontalMovement(velocity, direction)
 
-	e.onTick = func(mm *model, ee *Entity, dt time.Duration) {
+	e.onTick = func(mm *model, ee *entity, dt time.Duration) {
 		// Update horizontal movement
-		horizontalMovement.UpdateHorizontal(ee, dt)
+		horizontalMovement.updateHorizontal(ee, dt)
 
 		bubbleX := ee.x
 		if horizontalMovement.direction > 0 {
@@ -48,12 +48,12 @@ func (m *model) addFish() {
 		bubbleY := ee.y + ee.s.h/2
 
 		// Spawn bubbles using Poisson distribution
-		if ShouldSpawnBubble(dt, bubbleSpawnRate) {
+		if shouldSpawnBubble(dt, bubbleSpawnRate) {
 			mm.addBubble(bubbleX, bubbleY, ee.z-1)
 		}
 
 		// Kill fish if it swims off screen
-		if IsOffScreenHorizontal(ee, mm.windowWidth) {
+		if isOffScreenHorizontal(ee, mm.windowWidth) {
 			ee.alive = false
 		}
 	}
@@ -75,9 +75,9 @@ func (m *model) createMovement(num, width int) (int, int) {
 // addBubble creates a bubble entity that rises from the given position
 func (m *model) addBubble(x, y, z int) {
 	bubble := newSprite([]string{".", "o", "O"}, []string{"c", "c", "c"})
-	verticalMovement := NewVerticalMovement(bubbleRiseSpeed, -1)
+	verticalMovement := newVerticalMovement(bubbleRiseSpeed, -1)
 
-	e := &Entity{
+	e := &entity{
 		s:          bubble,
 		x:          x,
 		y:          y,
@@ -87,14 +87,14 @@ func (m *model) addBubble(x, y, z int) {
 		alive:      true,
 	}
 
-	e.onTick = func(mm *model, ee *Entity, dt time.Duration) {
+	e.onTick = func(mm *model, ee *entity, dt time.Duration) {
 		// Animate bubble growth
 		if ee.frame < len(ee.s.frames)-1 {
 			ee.AdvanceFrame()
 		}
 
 		// Move bubble upward
-		verticalMovement.UpdateVertical(ee, dt)
+		verticalMovement.updateVertical(ee, dt)
 
 		// Kill bubble when it reaches the surface
 		if ee.y <= waterSurfaceOffset {

@@ -1,11 +1,11 @@
-package main
+package gocean
 
 import (
 	"math/rand"
 	"strings"
 	"time"
 
-	"gocean/internal/art"
+	"github.com/myka0/gocean/internal/art"
 )
 
 // addEnvironment creates the water surface waves that appear at the top of the screen
@@ -22,7 +22,7 @@ func (m *model) addEnvironment() {
 
 		// Create the environment sprite and entity
 		sprite := newSprite([]string{image}, []string{mask})
-		e := &Entity{
+		e := &entity{
 			s:     sprite,
 			x:     0,
 			y:     5 + i,
@@ -38,7 +38,7 @@ func (m *model) addEnvironment() {
 func (m *model) addCastle() {
 	// Create castle sprite and position it on the right side of the screen
 	sprite := newSprite([]string{art.Castle.Frame}, []string{art.Castle.Mask})
-	e := &Entity{
+	e := &entity{
 		s:     sprite,
 		x:     m.windowWidth - 32,
 		y:     m.windowHeight - 13,
@@ -59,7 +59,7 @@ func (m *model) addAllSeaweed() {
 
 // addSeaweed creates a single animated seaweed plant at a random position
 func (m *model) addSeaweed() {
-	height := RandomSeaweedHeight()
+	height := randomSeaweedHeight()
 
 	// Create two animation frames for swaying motion
 	frameA := strings.Repeat("(\n )\n", height)
@@ -79,7 +79,7 @@ func (m *model) addSeaweed() {
 	y := m.windowHeight - height
 	animSpeed := rand.Intn(100+1) + 400
 
-	e := &Entity{
+	e := &entity{
 		s:          sp,
 		x:          x,
 		y:          y,
@@ -91,7 +91,7 @@ func (m *model) addSeaweed() {
 	// Seaweed lives for 5 - 10 minutes
 	lifetime := 5*time.Minute + time.Duration(rand.Intn(5*60))*time.Second
 
-	e.onTick = func(mm *model, ee *Entity, dt time.Duration) {
+	e.onTick = func(mm *model, ee *entity, dt time.Duration) {
 		ee.AdvanceFrame()
 
 		lifetime -= dt

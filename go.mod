@@ -1,4 +1,4 @@
-module gocean
+module github.com/myka0/gocean
 
 go 1.24.5
 

@@ -1,13 +1,13 @@
-package main
+package gocean
 
 import (
 	"time"
 )
 
-// Entity represents any drawable object in the ocean simulation
-type Entity struct {
+// entity represents any drawable object in the ocean simulation
+type entity struct {
 	// Visual representation
-	s Sprite
+	s sprite
 
 	// Position
 	x, y, z int
@@ -22,12 +22,12 @@ type Entity struct {
 	alive    bool
 
 	// Behavior hooks
-	onTick func(*model, *Entity, time.Duration)
+	onTick func(*model, *entity, time.Duration)
 	onDie  func(*model)
 }
 
 // AdvanceFrame updates the entity's animation frame based on its frameDelay
-func (e *Entity) AdvanceFrame() {
+func (e *entity) AdvanceFrame() {
 	// Only advance if enough time has passed since the last frame change
 	if time.Since(e.lastFrame) >= e.frameDelay {
 		// Cycle to next frame, wrapping around to 0 after the last frame

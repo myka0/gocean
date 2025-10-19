@@ -1,4 +1,4 @@
-package main
+package gocean
 
 import (
 	"time"
@@ -86,7 +86,7 @@ func (m *model) updateSimulation(dt time.Duration) {
 
 // cullDeadEntities removes dead entities from the simulation efficiently
 func (m *model) cullDeadEntities() {
-	m.aliveTemp = make(map[int][]*Entity)
+	m.aliveTemp = make(map[int][]*entity)
 	for z, entities := range m.entities {
 		for _, e := range entities {
 			if e.alive {
@@ -120,7 +120,7 @@ func (m *model) updateAndRenderEntities(dt time.Duration) {
 }
 
 // render draws an entity to the grid at its current position
-func (m *model) render(e *Entity) {
+func (m *model) render(e *entity) {
 	frame := e.s.frames[e.frame]
 
 	ex, ey := e.x, e.y
