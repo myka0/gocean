@@ -147,10 +147,8 @@ func (m *model) render(e *Entity) {
 
 // clearGrid resets all grid cells to spaces for the next frame
 func (m *model) clearGrid() {
-	for y := range m.grid {
-		row := m.grid[y]
+	for _, row := range m.grid {
 		for i := range row {
-			// Reuse existing cells to avoid allocations
 			row[i] = " "
 		}
 	}

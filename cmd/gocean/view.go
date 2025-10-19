@@ -12,7 +12,7 @@ import (
 func (m *model) View() string {
 	// Add debug text to first line if debug mode is enabled
 	if m.debug && len(m.grid) > 0 && len(m.grid[0]) > 0 {
-		debugText := fmt.Sprintf("FPS: %.1f", m.fps)
+		debugText := fmt.Sprintf("FPS: %7.1f", m.fps)
 		for i, char := range debugText {
 			if i < len(m.grid[0]) {
 				m.grid[0][i] = string(char)

@@ -88,7 +88,18 @@ func (m *model) addSeaweed() {
 		alive:      true,
 	}
 
-	e.onTick = func(mm *model, ee *Entity, dt time.Duration) { ee.AdvanceFrame() }
+	// Seaweed lives for 5 - 10 minutes
+	lifetime := 5*time.Minute + time.Duration(rand.Intn(5*60))*time.Second
+
+	e.onTick = func(mm *model, ee *Entity, dt time.Duration) {
+		ee.AdvanceFrame()
+
+		lifetime -= dt
+		if lifetime <= 0 {
+			ee.alive = false
+		}
+	}
+
 	e.onDie = func(mm *model) { mm.addSeaweed() }
 	m.entities[e.z] = append(m.entities[e.z], e)
 }
