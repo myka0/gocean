@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"time"
@@ -26,29 +27,44 @@ type model struct {
 	// Performance optimization buffers
 	renderBuf []byte
 	aliveTemp map[int][]*Entity
+
+	// Debug and performance tracking
+	debug     bool
+	tickRate  time.Duration
+	frameTime time.Duration
+	fps       float64
 }
 
 // initialModel creates and initializes a new aquarium model
-func initialModel(width, height int) *model {
+func initialModel(width, height int, debug bool, maxFPS int) *model {
+	tickRate := time.Nanosecond
+	if maxFPS > 0 {
+		tickRate = time.Second / time.Duration(maxFPS)
+	}
+
 	m := &model{
 		windowWidth:  width,
 		windowHeight: height,
 		lastTick:     time.Now(),
 		paused:       false,
 		entities:     make(map[int][]*Entity),
+		debug:        debug,
+		tickRate:     tickRate,
 	}
 
-	// Initialize the rendering grid
-	m.allocGrid()
+	m.resetGame()
+	return m
+}
 
-	// Create environment and creatures
+// resetGame resets the grid and all entities
+func (m *model) resetGame() {
+	m.entities = make(map[int][]*Entity)
+	m.allocGrid()
 	m.addEnvironment()
 	m.addCastle()
 	m.addAllSeaweed()
 	m.addAllFish()
 	m.addSpecial()
-
-	return m
 }
 
 // allocGrid initializes the 2D rendering grid
@@ -61,12 +77,16 @@ func (m *model) allocGrid() {
 
 // Init implements the Bubble Tea interface for initialization
 func (m *model) Init() tea.Cmd {
-	return tea.Batch(tick(), tea.EnterAltScreen)
+	return tea.Batch(tick(m.tickRate), tea.EnterAltScreen)
 }
 
 // main initializes and runs the aquarium application
 func main() {
-	p := tea.NewProgram(initialModel(defaultWidth, defaultHeight))
+	debug := flag.Bool("debug", false, "Enable debug mode.")
+	maxFPS := flag.Int("fps", 120, "Maximum frames per second. 0 for unlimited.")
+	flag.Parse()
+
+	p := tea.NewProgram(initialModel(defaultWidth, defaultHeight, *debug, *maxFPS))
 
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Alas, there's been an error: %v", err)

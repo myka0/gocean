@@ -3,9 +3,6 @@ package main
 import "time"
 
 const (
-	// Fame rate
-	tickEvery = time.Second / 120
-
 	// Z axis layers (higher draws first)
 	zShark     = 2
 	zFishStart = 3

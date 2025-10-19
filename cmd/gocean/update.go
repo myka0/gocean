@@ -7,8 +7,8 @@ import (
 )
 
 // tick creates a timer command for animation updates with precise timing
-func tick() tea.Cmd {
-	return tea.Tick(tickEvery-time.Millisecond, func(t time.Time) tea.Msg {
+func tick(tickRate time.Duration) tea.Cmd {
+	return tea.Tick(tickRate-time.Millisecond, func(t time.Time) tea.Msg {
 		return tickMsg(t)
 	})
 }
@@ -29,7 +29,10 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // handleWindowResize recreates the model with new dimensions
 func (m *model) handleWindowResize(msg tea.WindowSizeMsg) (tea.Model, tea.Cmd) {
-	return initialModel(msg.Width, msg.Height), nil
+	width, height := max(defaultWidth, msg.Width), max(defaultHeight, msg.Height)
+	m.windowWidth, m.windowHeight = width, height
+	m.resetGame()
+	return m, nil
 }
 
 // handleKeyPress processes keyboard input
@@ -41,9 +44,7 @@ func (m *model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.paused = !m.paused
 		return m, nil
 	case "r":
-		paused := m.paused
-		m = initialModel(m.windowWidth, m.windowHeight)
-		m.paused = paused
+		m.resetGame()
 		return m, nil
 	}
 	return m, nil
@@ -51,30 +52,12 @@ func (m *model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 // handleTick processes animation frame updates
 func (m *model) handleTick() (tea.Model, tea.Cmd) {
-	if !m.shouldProcessFrame() {
-		return m, tick()
-	}
-
 	dt := m.calculateDeltaTime()
-	if m.paused {
-		return m, tick()
+	if !m.paused {
+		m.updateSimulation(dt)
 	}
 
-	m.updateSimulation(dt)
-	return m, tick()
-}
-
-// shouldProcessFrame implements frame rate limiting for consistent FPS
-func (m *model) shouldProcessFrame() bool {
-	now := time.Now()
-	frameDuration := now.Sub(m.lastFrame)
-
-	if frameDuration < tickEvery {
-		return false
-	}
-
-	m.lastFrame = now
-	return true
+	return m, tick(m.tickRate)
 }
 
 // calculateDeltaTime computes time elapsed since last frame
@@ -82,6 +65,15 @@ func (m *model) calculateDeltaTime() time.Duration {
 	now := time.Now()
 	dt := now.Sub(m.lastTick)
 	m.lastTick = now
+
+	// Update FPS calculation for debug mode
+	if m.debug {
+		m.frameTime = dt
+		if dt > 0 {
+			m.fps = float64(time.Second) / float64(dt)
+		}
+	}
+
 	return dt
 }
 
@@ -137,8 +129,8 @@ func (m *model) render(e *Entity) {
 	// Draw each character of the entity sprite
 	for y := 0; y < e.s.h && ey+y < h; y++ {
 		for x := 0; x < len(frame.image[y]) && ex+x < w; x++ {
-			// Skip if position is off-screen to the left
-			if ex+x < 0 {
+			// Skip if position is off-screen to the left or top
+			if ex+x < 0 || ey+y < 0 {
 				continue
 			}
 
