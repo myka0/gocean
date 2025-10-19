@@ -33,8 +33,8 @@ type model struct {
 	fps       float64
 }
 
-// InitialModel creates and initializes a new aquarium model
-func InitialModel(width, height int, debug bool, maxFPS int) *model {
+// InitModel creates and initializes a new aquarium model
+func InitModel(width, height int, debug bool, maxFPS int) *model {
 	tickRate := time.Nanosecond
 	if maxFPS > 0 {
 		tickRate = time.Second / time.Duration(maxFPS)
@@ -84,7 +84,7 @@ func NewProgram() *tea.Program {
 	maxFPS := flag.Int("fps", 120, "Maximum frames per second. 0 for unlimited.")
 	flag.Parse()
 
-	p := tea.NewProgram(InitialModel(defaultWidth, defaultHeight, *debug, *maxFPS))
+	p := tea.NewProgram(InitModel(defaultWidth, defaultHeight, *debug, *maxFPS))
 
 	return p
 }
