@@ -6,7 +6,7 @@ Enjoy the mysteries of the sea from the safety of your own terminal!
 Gocean is a Go port of the classic **Asciiquarium** by [Kirk Baucom](https://robobunny.com/projects/asciiquarium/html).  
 It reimagines the original Perl animation with modern Go features and improved performance.
 
-![Demo](assets/screenshot.png)
+![Demo](assets/demo.gif)
 
 ## Features
 
