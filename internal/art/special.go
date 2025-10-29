@@ -350,23 +350,6 @@ y?y   yy
   yyyy`,
 }
 
-// var FishHook = RawStaticArt{
-// 	Frame:
-// `       o
-//       ||
-//  .    ||
-// / \   ||
-//  \\__//
-//   b--'`,
-// 	Mask:
-// `       y
-//       yy
-//  y    yy
-// y y   yy
-//  yyyyyy
-//   yyyy`,
-// }
-
 var Swan = []RawStaticArt{
 	{
 		Frame: `       ___
