@@ -39,7 +39,7 @@ const (
 	swanVelocity      = 10  // chars/sec
 	whaleVelocity     = 10  // chars/sec
 	ducksVelocity     = 10  // chars/sec
-	dolphinVelocity   = 15  // chars/sec
+	dolphinVelocity   = 20  // chars/sec
 	fishHookVelocity  = 10  // chars/sec
 	monsterVelocity   = 20  // chars/sec
 	bigFishVelocity   = 30  // chars/sec
@@ -51,7 +51,7 @@ const (
 
 	// Animation timing
 	bubbleFrameDelay     = 1 * time.Second
-	monsterFrameDelay    = 150 * time.Millisecond
+	monsterFrameDelay    = 200 * time.Millisecond
 	waterSpoutFrameDelay = 100 * time.Millisecond
 	waterSpoutResetDelay = 1000 * time.Millisecond
 	splatFrameDelay      = 500 * time.Millisecond
