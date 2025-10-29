@@ -78,7 +78,7 @@ func (m *model) Init() tea.Cmd {
 	return tea.Batch(tick(m.tickRate), tea.EnterAltScreen)
 }
 
-// main initializes and runs the aquarium application
+// NewProgram initializes and runs the gocean simulation
 func NewProgram() *tea.Program {
 	debug := flag.Bool("debug", false, "Enable debug mode.")
 	maxFPS := flag.Int("fps", 120, "Maximum frames per second. 0 for unlimited.")
