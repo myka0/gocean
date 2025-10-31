@@ -4,7 +4,7 @@ import (
 	"flag"
 	"time"
 
-	tea "github.com/charmbracelet/bubbletea/v2"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 // tickMsg represents a timer tick for animation updates

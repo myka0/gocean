@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"unsafe"
 
-	"github.com/charmbracelet/lipgloss/v2"
+	"github.com/charmbracelet/lipgloss"
 )
 
 // View renders the current state to a string for display

@@ -3,12 +3,12 @@ package gocean
 import (
 	"time"
 
-	tea "github.com/charmbracelet/bubbletea/v2"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 // tick creates a timer command for animation updates with precise timing
 func tick(tickRate time.Duration) tea.Cmd {
-	return tea.Tick(tickRate-time.Millisecond, func(t time.Time) tea.Msg {
+	return tea.Tick(tickRate, func(t time.Time) tea.Msg {
 		return tickMsg(t)
 	})
 }
