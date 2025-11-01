@@ -7,9 +7,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-// tickMsg represents a timer tick for animation updates
-type tickMsg time.Time
-
 // model holds the application state for the aquarium simulation
 type model struct {
 	// Display dimensions
@@ -29,8 +26,6 @@ type model struct {
 	// Debug and performance tracking
 	debug     bool
 	tickRate  time.Duration
-	frameTime time.Duration
-	fps       float64
 }
 
 // InitModel creates and initializes a new aquarium model
@@ -75,7 +70,7 @@ func (m *model) allocGrid() {
 
 // Init implements the Bubble Tea interface for initialization
 func (m *model) Init() tea.Cmd {
-	return tea.Batch(tick(m.tickRate), tea.EnterAltScreen)
+	return tick(m.tickRate)
 }
 
 // NewProgram initializes and runs the gocean simulation
@@ -84,7 +79,7 @@ func NewProgram() *tea.Program {
 	maxFPS := flag.Int("fps", 120, "Maximum frames per second. 0 for unlimited.")
 	flag.Parse()
 
-	p := tea.NewProgram(InitModel(defaultWidth, defaultHeight, *debug, *maxFPS))
+	p := tea.NewProgram(InitModel(defaultWidth, defaultHeight, *debug, *maxFPS), tea.WithAltScreen())
 
 	return p
 }

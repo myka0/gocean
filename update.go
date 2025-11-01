@@ -1,14 +1,18 @@
 package gocean
 
 import (
+	"fmt"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+// tickMsg represents a timer tick for animation updates
+type tickMsg time.Time
+
 // tick creates a timer command for animation updates with precise timing
 func tick(tickRate time.Duration) tea.Cmd {
-	return tea.Tick(tickRate, func(t time.Time) tea.Msg {
+	return tea.Every(tickRate, func(t time.Time) tea.Msg {
 		return tickMsg(t)
 	})
 }
@@ -52,29 +56,29 @@ func (m *model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 // handleTick processes animation frame updates
 func (m *model) handleTick() (tea.Model, tea.Cmd) {
-	dt := m.calculateDeltaTime()
+	now := time.Now()
+	dt := now.Sub(m.lastTick)
+	m.lastTick = now
+
 	if !m.paused {
 		m.updateSimulation(dt)
+		if m.debug {
+			m.addDebugText(dt)
+		}
 	}
 
 	return m, tick(m.tickRate)
 }
 
-// calculateDeltaTime computes time elapsed since last frame
-func (m *model) calculateDeltaTime() time.Duration {
-	now := time.Now()
-	dt := now.Sub(m.lastTick)
-	m.lastTick = now
+// addDebugText writes a single line of debug text to the first row
+func (m *model) addDebugText(dt time.Duration) {
+	fps := float64(time.Second) / float64(dt)
+	text := fmt.Sprintf("FPS: %7.1f  DT: %7d us", fps, dt.Microseconds())
 
-	// Update FPS calculation for debug mode
-	if m.debug {
-		m.frameTime = dt
-		if dt > 0 {
-			m.fps = float64(time.Second) / float64(dt)
-		}
+	row := m.grid[0]
+	for i := 0; i < len(row) && i < len(text); i++ {
+		row[i] = string(text[i])
 	}
-
-	return dt
 }
 
 // updateSimulation runs one frame of the aquarium simulation
