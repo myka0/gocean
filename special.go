@@ -21,10 +21,11 @@ const (
 	swan
 	ducks
 	dolphins
+	swordFish
 	specialEntityCount
 )
 
-// addSpecial creates special entities using improved selection and configuration
+// addSpecial creates special entities
 func (m *model) addSpecial() {
 	specialType := specialEntityType(rand.Intn(int(specialEntityCount)))
 
@@ -47,6 +48,8 @@ func (m *model) addSpecial() {
 		m.addDucks()
 	case dolphins:
 		m.addDolphins()
+	case swordFish:
+		m.addSwordFish()
 	}
 }
 
@@ -195,7 +198,7 @@ func (m *model) addWhale() {
 	m.entities[waterSpout.z] = append(m.entities[waterSpout.z], waterSpout)
 }
 
-// addWaterSpout creates a water spout animation with improved frame management
+// addWaterSpout creates a water spout animation
 func (m *model) addWaterSpout(x int, y int, dir int) *entity {
 	// Create water spout sprite
 	mask := make([]string, len(art.WaterSpoutFrames))
@@ -232,7 +235,7 @@ func (m *model) addWaterSpout(x int, y int, dir int) *entity {
 	return e
 }
 
-// addShark creates a shark with improved collision detection
+// addShark creates a shark with collision detection
 func (m *model) addShark() {
 	// Randomly select left or right facing shark
 	num := rand.Intn(2)
@@ -255,7 +258,7 @@ func (m *model) addShark() {
 	e.onTick = func(mm *model, ee *entity, dt time.Duration) {
 		horizontalMovement.updateHorizontal(ee, dt)
 
-		// Calculate teeth position with improved logic
+		// Calculate teeth position with logic
 		teethX := ee.x + 50
 		if direction == -1 {
 			teethX = ee.x + 3
@@ -279,7 +282,7 @@ func (m *model) addShark() {
 	m.entities[e.z] = append(m.entities[e.z], e)
 }
 
-// addSplat creates a splat effect using entity pooling
+// addSplat creates a splat effect
 func (m *model) addSplat(x, y int) {
 	splat := newSprite(art.SplatFrames, art.SplatMasks)
 
@@ -302,7 +305,7 @@ func (m *model) addSplat(x, y int) {
 	m.entities[e.z] = append(m.entities[e.z], e)
 }
 
-// addFishHook creates a fish hook with improved bounds checking and validation
+// addFishHook creates a fish hook
 func (m *model) addFishHook() {
 	maxHeight := m.windowHeight/4 + m.windowHeight/2
 	x := 10 + rand.Intn(m.windowWidth-40)
@@ -368,7 +371,7 @@ func (m *model) addFishHook() {
 	m.entities[line.z] = append(m.entities[line.z], line)
 }
 
-// addFishingLine creates a fishing line with improved validation
+// addFishingLine creates a fishing line
 func (m *model) addFishingLine(x int, y int, maxHeight int) *entity {
 	lineHeight := maxHeight - y
 
@@ -388,7 +391,7 @@ func (m *model) addFishingLine(x int, y int, maxHeight int) *entity {
 	return line
 }
 
-// addDolphins creates dolphins with improved movement logic
+// addDolphins creates dolphins
 func (m *model) addDolphins() {
 	dir := rand.Intn(2)
 	d1 := m.createDolphin(dir, 0)
@@ -402,7 +405,7 @@ func (m *model) addDolphins() {
 	m.entities[d3.z] = append(m.entities[d3.z], d3)
 }
 
-// createDolphin creates a single dolphin with improved boundary checking
+// createDolphin creates a single dolphin
 func (m *model) createDolphin(dir int, num int) *entity {
 	var y int
 	switch num {
@@ -459,3 +462,14 @@ func (m *model) createDolphin(dir int, num int) *entity {
 
 	return e
 }
+
+// addSwordFish creates a swordfish
+func (m *model) addSwordFish() {
+	dir := rand.Intn(2)
+	sprite := newSprite([]string{art.SwordFish[dir].Frame}, []string{art.SwordFish[dir].Mask})
+	y := rand.Intn(m.windowHeight-waterSurfaceOffset-sprite.h) + waterSurfaceOffset
+
+	e := m.createHorizontalEntity(dir, y, zShark, swordFishVelocity, sprite)
+	m.entities[e.z] = append(m.entities[e.z], e)
+}
+

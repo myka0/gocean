@@ -44,6 +44,7 @@ const (
 	monsterVelocity   = 20  // chars/sec
 	bigFishVelocity   = 30  // chars/sec
 	sharkVelocity     = 30  // chars/sec
+	swordFishVelocity = 35  // chars/sec
 
 	// Seaweed constants
 	minSeaweedHeight = 3
