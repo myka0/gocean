@@ -3,13 +3,13 @@ package gocean
 import (
 	"fmt"
 	"math/rand"
-	"unsafe"
 
-	"github.com/charmbracelet/lipgloss"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 )
 
 // View renders the current state to a string for display
-func (m *model) View() string {
+func (m *model) View() tea.View {
 	// Precalculate total buffer size
 	total := 0
 	for _, row := range m.grid {
@@ -27,7 +27,7 @@ func (m *model) View() string {
 	}
 
 	// Build the output buffer
-	pos := copy(m.renderBuf, "\n")
+	pos := 0
 	for _, row := range m.grid {
 		for _, s := range row {
 			pos += copy(m.renderBuf[pos:], s)
@@ -35,8 +35,9 @@ func (m *model) View() string {
 		pos += copy(m.renderBuf[pos:], "\n")
 	}
 
-	// Zero-copy string creation using unsafe
-	return unsafe.String(&m.renderBuf[0], len(m.renderBuf))
+	v := tea.NewView(string(m.renderBuf))
+	v.AltScreen = true
+	return v
 }
 
 // createPalette generates a color palette for entity rendering

@@ -4,7 +4,7 @@ import (
 	"flag"
 	"time"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 )
 
 // model holds the application state for the aquarium simulation
@@ -79,7 +79,7 @@ func NewProgram() *tea.Program {
 	maxFPS := flag.Int("fps", 120, "Maximum frames per second. 0 for unlimited.")
 	flag.Parse()
 
-	p := tea.NewProgram(InitModel(defaultWidth, defaultHeight, *debug, *maxFPS), tea.WithAltScreen())
+	p := tea.NewProgram(InitModel(defaultWidth, defaultHeight, *debug, *maxFPS))
 
 	return p
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 )
 
 // tickMsg represents a timer tick for animation updates
@@ -22,7 +22,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		return m.handleWindowResize(msg)
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		return m.handleKeyPress(msg)
 	case tickMsg:
 		return m.handleTick()
@@ -40,7 +40,7 @@ func (m *model) handleWindowResize(msg tea.WindowSizeMsg) (tea.Model, tea.Cmd) {
 }
 
 // handleKeyPress processes keyboard input
-func (m *model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+func (m *model) handleKeyPress(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "q", "ctrl+c":
 		return m, tea.Quit
